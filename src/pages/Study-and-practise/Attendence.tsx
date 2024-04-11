@@ -6,11 +6,12 @@ import dayjs from 'dayjs';
 import { Table } from 'antd';
 import { Checkbox } from 'antd';
 import type { TableColumnsType, TableProps } from 'antd';
-import Students from "../Students/Student-list";
+import { Select } from 'antd';
+
 import axios from "axios";
 type TableRowSelection<T> = TableProps<T>['rowSelection'];
 
-interface DataType {
+interface DataTypeDay {
   key: number;
   Stt: number;
   Ho_Ten: string;
@@ -18,7 +19,17 @@ interface DataType {
   Co_Mat: JSX.Element;
   Nghi_Co_Phep: JSX.Element;
   Nghi_Khong_Phep: JSX.Element;
-  Trang_Thai: number
+  Trang_Thai: string
+}
+interface DataTypeMonth {
+  key: number,
+  Ho_Ten: string, // Assuming `s` contains the name of the student
+    Ngay_sinh: string,
+      Stt: number,
+        So_Luot_Muon: number,
+          Tong_Ngay_nghi: number,
+            Nghi_Co_Phep: number,
+              Nghi_Khong_Phep: number,
 }
 interface DataAllClass {
   classId: string,
@@ -294,7 +305,7 @@ const Attendences = () => {
     getStudents();
   }, [student])
   console.log(student[1])
-  const rowSelection: TableRowSelection<DataType> = {
+  const rowSelection: TableRowSelection<DataTypeDay> = {
     onSelect: (record, selected, selectedRows) => {
       console.log(record, selected, selectedRows);
     },
@@ -302,7 +313,7 @@ const Attendences = () => {
       console.log(selected, selectedRows, changeRows);
     },
   };
-  const columnsAttendenceByDay: TableColumnsType<DataType> = [
+  const columnsAttendenceByDay: TableColumnsType<DataTypeDay> = [
     {
       title: 'Stt',
       dataIndex: 'Stt',
@@ -332,6 +343,13 @@ const Attendences = () => {
       align: "center"
     },
     {
+      title: 'Đi Muộn',
+      dataIndex: 'Di_Muon',
+      width: '10%',
+      key: 'Di_Muon',
+      align: "center"
+    },
+    {
       title: 'Nghỉ có phép',
       dataIndex: 'Nghi_Co_Phep',
       width: '10%',
@@ -347,9 +365,9 @@ const Attendences = () => {
     },
     {
       title: 'Trạng thái',
-      dataIndex: 'Trạng_Thái',
+      dataIndex: 'Trang_Thai',
       width: '14%',
-      key: 'Trạng_Thái',
+      key: 'Trang_Thai',
       align: "center"
     }
   ];
@@ -359,11 +377,12 @@ const Attendences = () => {
     Ngay_sinh: data.birthday.split('T')[0],
     Stt: data.id,
     Co_Mat: <Checkbox></Checkbox>,
+    Di_Muon: <Checkbox></Checkbox>,
     Nghi_Co_Phep: <Checkbox></Checkbox>,
     Nghi_Khong_Phep: <Checkbox></Checkbox>,
-    Trang_Thai: data.studentCode
+    Trang_Thai: 0?"chưa thông báo":"Đã thông báo"
   }));
-  const columnsAttendenceByMonth: TableColumnsType<DataType> = [
+  const columnsAttendenceByMonth: TableColumnsType<DataTypeMonth> = [
     {
       title: 'Stt',
       dataIndex: 'Stt',
@@ -420,85 +439,60 @@ const Attendences = () => {
     Ngay_sinh: data.birthday.split('T')[0],
     Stt: data.id,
     So_Luot_Muon: 10,
-    Tong_Ngay_nghi:10,
+    Tong_Ngay_nghi: 10,
     Nghi_Co_Phep: 5,
     Nghi_Khong_Phep: 5,
-    }));
+  }));
 
   const [classes, setClasses] = useState("1a1");
-  const [classNameClass, setClassNameClass] = useState("hiddens");
+  const [classNameClass, setClassNameClass] = useState("hidden");
   const choseClass = (className: string) => {
     setClasses(className);
-    setClassNameClass("hiddens")
+    setClassNameClass("hidden")
 
   }
   const [attendence, setAtendence] = useState("attendance-by-day");
-
+  const options = AllClasses.map(c => ({
+    value: c.className,
+    label: c.className
+  }));
   return (
     <div className="attendances ">
-      <div className="attendanceItem">
-        <div className={`attendance ${attendence === "attendance-by-day" ? "actives" : ""}`} onClick={() => setAtendence("attendance-by-day")}>
+      <div className="bg-gray-200 h-10 flex">
+        <div className={`flex items-center justify-center px-14 cursor-context-menu ${attendence === "attendance-by-day" ? "text-green-500 border-t-2 border-green-500 bg-white w-189 px-0" : ""}`} onClick={() => setAtendence("attendance-by-day")}>
           Điểm danh theo ngày
         </div>
-        <div className={`attendance ${attendence === "attendance-by-month" ? "actives" : ""}`} onClick={() => setAtendence("attendance-by-month")}>
+        <div className={`flex items-center justify-center px-14 cursor-context-menu ${attendence === "attendance-by-month" ? "text-green-500 border-t-2 border-green-500 bg-white w-189 px-0" : ""}`} onClick={() => setAtendence("attendance-by-month")}>
           Điểm danh theo tháng
         </div>
       </div>
-      <div className={`${attendence !== "attendance-by-day" ? "hiddens" : "attendance-by-day"}`}>
+      <div className={`${attendence !== "attendance-by-day" ? "hidden" : "attendance-by-day"}`}>
         <div style={{ display: "flex", padding: "16px" }}>
-          <div className="class">
-            <div onClick={() => {
-              if (classNameClass === "hiddens") {
-                setClassNameClass("show")
-              } else {
-                setClassNameClass("hiddens")
-              }
-            }} style={{
-              width: "117px",
-              padding: "4px 0px 4px 16px",
-              borderRadius: "3px",
-              border: "1px solid #3333",
-              marginRight: "13px"
-            }}>
-              {AllClasses.find(c => c.className === classes)?.className}
-              <IoIosArrowDown style={{
-                float: "right",
-                marginRight: "3px",
-                marginTop: "3px"
-              }} />
-            </div>
-            <div className={classNameClass}>
-
-              {AllClasses.map((c => (
-                <div onClick={() => choseClass(c.className)} key={c.classId} className="classItem">
-                  {c.className}
-                </div>
-              )))}
-            </div>
-
+          <div style={{marginRight:"14px"}}>
+            <Select style={{width:"100px",height:"38px"}} options={options} defaultValue={options[0].value} />
           </div>
           <Space direction="vertical">
-            <DatePicker disabledDate={(date) => {
+            <DatePicker style={{height:"38px"}} disabledDate={(date) => {
               return date.isBefore(dayjs(new Date(`${new Date().getFullYear()}/${new Date().getMonth() + 1}/${new Date().getDate()}`)))
             }} />
           </Space>
-          <div className="number-student">
+          <div className="mx-4 border flex items-center rounded-lg justify-center" style={{width:"89px",height:"38px",border:"1px solid rgb(52, 150, 52)",color:"rgb(52, 150, 52)"}}>
             Tất cả : 38
           </div>
-          <div className="number-student-go-to-school">
+          <div className="border border-solid border-gray-300 flex justify-center items-center rounded-lg"style={{width:"99px",height:"38px"}}>
             Có mặt : 38
           </div>
-          <div className="Study-permits-are-allowed">
+          <div className="mx-4 border border-solid border-gray-300 rounded-lg flex items-center justify-center"style={{width:"99px",height:"38px"}}>
             Có phép : 0
           </div>
-          <div className="Study-permits-are-not-allowed">
+          <div className="border border-solid border-gray-300 w-127 h-38 rounded-lg flex justify-center items-center"style={{width:"135px",height:"38px"}}>
             Không phép : 0
           </div>
           <div style={{ width: "560px" }}>
             <Button type="primary" style={{ float: "right", background: "#349634" }}>Thông báo cho PH</Button>
           </div>
         </div>
-        <div className="list-student">
+        <div className="mx-15">
           <Table
 
             rowSelection={{
@@ -511,50 +505,22 @@ const Attendences = () => {
             scroll={{ y: 385 }}
           />
         </div>
-        <div className="submit">
-          <Button type="primary" className="btn-submit">Lưu Lại</Button>
+        <div className="w-full mt-4">
+          <Button type="primary" className="float-right mr-14 bg-green-600"style={{background: "rgb(52, 150, 52)"}}>Lưu Lại</Button>
         </div>
       </div>
-      <div className={`${attendence !== "attendance-by-month" ? "hiddens" : "attendance-by-month"}`}>
-        <div style={{ display: "flex", padding: "16px" }}>
-          <div className="class">
-            <div onClick={() => {
-              if (classNameClass === "hiddens") {
-                setClassNameClass("show")
-              } else {
-                setClassNameClass("hiddens")
-              }
-            }} style={{
-              width: "117px",
-              padding: "4px 0px 4px 16px",
-              borderRadius: "3px",
-              border: "1px solid #3333",
-              marginRight: "13px"
-            }}>
-              {AllClasses.find(c => c.className === classes)?.className}
-              <IoIosArrowDown style={{
-                float: "right",
-                marginRight: "3px",
-                marginTop: "3px"
-              }} />
-            </div>
-            <div className={classNameClass}>
-
-              {AllClasses.map((c => (
-                <div onClick={() => choseClass(c.className)} key={c.classId} className="classItem">
-                  {c.className}
-                </div>
-              )))}
-            </div>
-
+      <div className={`${attendence !== "attendance-by-month" ? "hidden" : "attendance-by-month"}`}>
+      <div style={{ display: "flex", padding: "16px" }}>
+          <div style={{marginRight:"14px"}}>
+            <Select style={{width:"100px",height:"38px"}} options={options} defaultValue={options[0].value} />
           </div>
           <Space direction="vertical">
-            <DatePicker disabledDate={(date) => {
+            <DatePicker style={{height:"38px"}} disabledDate={(date) => {
               return date.isBefore(dayjs(new Date(`${new Date().getFullYear()}/${new Date().getMonth() + 1}/${new Date().getDate()}`)))
             }} />
           </Space>
         </div>
-        <div className="list-student">
+        <div className="list-student mx-15">
           <Table
             columns={columnsAttendenceByMonth}
             dataSource={dataAttendenceByMonth}
@@ -563,11 +529,11 @@ const Attendences = () => {
             scroll={{ y: 385 }}
           />
         </div>
-        <div className="submit">
-          <Button type="primary" className="btn-submit">Lưu Lại</Button>
+        <div className="w-full mt-4">
+          <Button type="primary" className="float-right mr-4 bg-green-600 "style={{background: "rgb(52, 150, 52)"}}>Lưu Lại</Button>
         </div>
         <div className="submit">
-          <Button type="primary" className="btn-submit">Sửa Đổi</Button>
+          <Button type="primary" className="float-right mr-4 bg-green-600"style={{background: "rgb(52, 150, 52)"}}>Sửa Đổi</Button>
         </div>
       </div>
 

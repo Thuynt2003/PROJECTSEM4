@@ -21,7 +21,7 @@ const DefaultLayout = () => {
           {/* <!-- ===== Header End ===== --> */}
 
           {/* <!-- ===== Main Content Start ===== --> */}
-          <main>
+          <main style={{height:"100%"}}>
               <Outlet />
           </main>
           {/* <!-- ===== Main Content End ===== --> */}

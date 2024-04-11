@@ -210,6 +210,30 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                 </NavLink>
               </li>
               {/* Attendence */}
+              {/* Acknowledge */}
+              <li>
+                <NavLink
+                  to="/acknowledge"
+                  className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${pathname.includes('acknowledge') &&
+                    'bg-graydark dark:bg-meta-4'
+                    }`}
+                >
+                  Acknowledge
+                </NavLink>
+              </li>
+              {/* Acknowledge */}
+              {/* {Evaluate} */}
+              <li>
+                <NavLink
+                  to="/evaluate"
+                  className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${pathname.includes('evaluate') &&
+                    'bg-graydark dark:bg-meta-4'
+                    }`}
+                >
+                  Evaluate
+                </NavLink>
+              </li>
+              {/* {Evaluate} */}
 
             </ul>
           </div>

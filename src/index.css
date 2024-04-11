@@ -161,3 +161,20 @@ span.flatpickr-weekday,
 [x-cloak] {
   display: none !important;
 }
+@keyframes show-years-school {
+  0% {
+      height: 18px;
+  }
+
+  25% {
+      height: 28px;
+  }
+
+  50% {
+      height: 45px;
+  }
+
+  75% {
+      height: 91px;
+  }
+}
