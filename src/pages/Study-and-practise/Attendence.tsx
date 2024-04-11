@@ -304,7 +304,7 @@ const Attendences = () => {
   useEffect(() => {
     getStudents();
   }, [student])
-  console.log(student[1])
+
   const rowSelection: TableRowSelection<DataTypeDay> = {
     onSelect: (record, selected, selectedRows) => {
       console.log(record, selected, selectedRows);
@@ -374,13 +374,13 @@ const Attendences = () => {
   const dataAttendenceByDay = student.map((data) => ({
     key: data.id,
     Ho_Ten: data.lastName + data.firstName, // Assuming `s` contains the name of the student
-    Ngay_sinh: data.birthday.split('T')[0],
+    Ngay_sinh: data.birthday,
     Stt: data.id,
     Co_Mat: <Checkbox></Checkbox>,
     Di_Muon: <Checkbox></Checkbox>,
     Nghi_Co_Phep: <Checkbox></Checkbox>,
     Nghi_Khong_Phep: <Checkbox></Checkbox>,
-    Trang_Thai: 0?"chưa thông báo":"Đã thông báo"
+    Trang_Thai: 0?"Đã thông báo":"chưa thông báo"
   }));
   const columnsAttendenceByMonth: TableColumnsType<DataTypeMonth> = [
     {
@@ -436,12 +436,13 @@ const Attendences = () => {
   const dataAttendenceByMonth = student.map((data) => ({
     key: data.id,
     Ho_Ten: data.lastName + data.firstName, // Assuming `s` contains the name of the student
-    Ngay_sinh: data.birthday.split('T')[0],
+    Ngay_sinh: data.birthday,
     Stt: data.id,
     So_Luot_Muon: 10,
     Tong_Ngay_nghi: 10,
     Nghi_Co_Phep: 5,
     Nghi_Khong_Phep: 5,
+    
   }));
 
   const [classes, setClasses] = useState("1a1");
